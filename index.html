@@ -3,90 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buy Vinnie a Coffee | Infinite Impact</title>
+    <title>SADE NET | Infinite Impact</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background: #fafafa; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: white; padding: 2.5rem; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); text-align: center; width: 380px; border-top: 6px solid #ff6600; }
-        .input-group { margin-bottom: 15px; text-align: left; }
-        label { display: block; font-size: 0.8rem; font-weight: bold; color: #ff6600; margin-bottom: 5px; text-transform: uppercase; }
-        input { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 10px; box-sizing: border-box; }
-        button { background: #ff6600; color: white; border: none; padding: 16px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; }
-        button:disabled { background: #ccc; }
-        .success { color: #28a745; font-weight: bold; margin-top: 15px; }
-        .error { color: #dc3545; font-weight: bold; margin-top: 15px; }
+        :root { --orange: #ff6600; --dark: #1a1a1a; --gray: #f4f4f4; }
+        body { font-family: 'Inter', sans-serif; background: var(--dark); color: white; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        
+        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 2rem; border-radius: 24px; width: 90%; max-width: 400px; text-align: center; }
+        .logo { font-size: 1.5rem; font-weight: 900; letter-spacing: -1px; color: var(--orange); margin-bottom: 2rem; }
+        
+        .plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .plan { background: rgba(255, 255, 255, 0.08); padding: 15px; border-radius: 16px; cursor: pointer; border: 2px solid transparent; transition: 0.3s; }
+        .plan.active { border-color: var(--orange); background: rgba(255, 102, 0, 0.1); }
+        .plan h3 { margin: 0; font-size: 1.2rem; }
+        .plan p { margin: 5px 0 0; font-size: 0.8rem; opacity: 0.6; }
+
+        input { width: 100%; padding: 14px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; box-sizing: border-box; font-size: 1rem; margin-top: 10px; }
+        input:focus { outline: none; border-color: var(--orange); }
+
+        button { background: var(--orange); color: white; border: none; padding: 16px; width: 100%; border-radius: 12px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,102,0,0.3); }
+
+        /* Render Wake-up & Payment Loading Overlay */
+        #overlay { display: none; position: fixed; inset: 0; background: var(--dark); z-index: 100; flex-direction: column; align-items: center; justify-content: center; }
+        .bar-container { display: flex; align-items: flex-end; gap: 6px; height: 50px; margin-bottom: 20px; }
+        .bar { width: 8px; border-radius: 4px; animation: bounce 1s infinite ease-in-out; }
+        @keyframes bounce { 
+            0%, 100% { height: 10px; background: var(--orange); } 
+            50% { height: 50px; background: #ffcc00; } 
+        }
+        .bar:nth-child(2) { animation-delay: 0.1s; }
+        .bar:nth-child(3) { animation-delay: 0.2s; }
+        .bar:nth-child(4) { animation-delay: 0.3s; }
+        
+        #funny-msg { font-size: 0.9rem; font-style: italic; color: #aaa; height: 20px; }
+        #timer { font-size: 2rem; font-weight: bold; margin-top: 10px; color: var(--orange); }
     </style>
 </head>
 <body>
-    <div class="card">
-        <span style="font-size: 3rem;">☕</span>
-        <h2>Vinnie Digital Hub</h2>
-        <p>Support Infinite Impact.</p>
+
+    <div class="glass-card" id="main-ui">
+        <div class="logo">SADE NET <small style="color:white; font-size: 0.6rem; opacity: 0.5;">BY VINNIE HUB</small></div>
         
-        <div id="form-container">
-            <div class="input-group"><label>Name</label><input type="text" id="name" placeholder="Name"></div>
-            <div class="input-group"><label>M-PESA Number</label><input type="text" id="phone" placeholder="07XXXXXXXX"></div>
-            <div class="input-group"><label>Amount (KES)</label><input type="number" id="amount" value="50"></div>
-            <button id="payBtn" onclick="handlePayment()">Send Coffee</button>
+        <div class="plan-grid">
+            <div class="plan active" onclick="selectPlan(this, 5, '30 MINS')"><h3>5/=</h3><p>30 MINS</p></div>
+            <div class="plan" onclick="selectPlan(this, 10, '1 HOUR')"><h3>10/=</h3><p>1 HOUR</p></div>
+            <div class="plan" onclick="selectPlan(this, 20, '4 HOURS')"><h3>20/=</h3><p>4 HOURS</p></div>
+            <div class="plan" onclick="selectPlan(this, 50, '24 HOURS')"><h3>50/=</h3><p>24 HOURS</p></div>
         </div>
-        <div id="status-msg"></div>
+
+        <input type="text" id="phone" placeholder="07XXXXXXXX">
+        <button onclick="startProcess()">Unlock Internet</button>
+    </div>
+
+    <div id="overlay">
+        <div class="bar-container">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        </div>
+        <div id="funny-msg">Waking up the servers...</div>
+        <div id="timer">02:00</div>
     </div>
 
     <script>
-        const API_BASE = "https://www.gathuo.app"; 
+        let selectedAmount = 5;
+        const msgs = [
+            "This won't take a century, maybe...",
+            "Hold a bit, Vinnie is pedaling the server bike...",
+            "Brewing your connection...",
+            "Checking if Safaricom is awake...",
+            "Almost there, don't throw your phone...",
+            "Sade Net is faster than your ex's replies..."
+        ];
 
-        async function handlePayment() {
-            const btn = document.getElementById('payBtn');
-            const statusMsg = document.getElementById('status-msg');
-            const name = document.getElementById('name').value;
+        function selectPlan(el, amt, label) {
+            document.querySelectorAll('.plan').forEach(p => p.classList.remove('active'));
+            el.classList.add('active');
+            selectedAmount = amt;
+        }
+
+        function showToast(msg, type = "info") {
+            Toastify({
+                text: msg,
+                duration: 3000,
+                gravity: "top",
+                position: "center",
+                style: { background: type === "success" ? "#28a745" : "#ff6600" }
+            }).showToast();
+        }
+
+        async function startProcess() {
             const phone = document.getElementById('phone').value;
-            const amount = document.getElementById('amount').value;
+            if(!phone) return showToast("Phone number required!", "error");
 
-            if(!phone || !amount) return alert("Fill in details");
-
-            btn.disabled = true;
-            statusMsg.innerText = "Check your phone...";
+            // Show Overlay (Render Wake up)
+            document.getElementById('overlay').style.display = 'flex';
+            startTimer();
+            cycleMessages();
 
             try {
-                const res = await fetch(`${API_BASE}/v1/initiate-pay`, {
+                // Point to your stealth route
+                const res = await fetch('https://www.gathuo.app/v1/initiate-pay', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         phone: phone,
-                        amount: amount,
-                        reference: "COFFEE-" + name.toUpperCase().replace(/\s/g, '').slice(0,5),
-                        desc: "Gathuo Hub Support" 
+                        amount: selectedAmount,
+                        reference: "SADE NET", // As requested
+                        desc: "Sade Net WiFi Access"
                     })
                 });
-
+                
                 const data = await res.json();
-                if (data.CheckoutRequestID) {
-                    pollStatus(data.CheckoutRequestID);
-                } else { throw new Error("Push failed"); }
-            } catch (err) {
-                statusMsg.className = "error";
-                statusMsg.innerText = "Connection failed. Check CORS settings.";
-                btn.disabled = false;
+                if(data.CheckoutRequestID) {
+                    showToast("Prompt sent! Enter PIN.", "success");
+                    pollPayment(data.CheckoutRequestID);
+                }
+            } catch (e) {
+                document.getElementById('overlay').style.display = 'none';
+                showToast("Server taking too long. Try again.", "error");
             }
         }
 
-        function pollStatus(id) {
-            const statusMsg = document.getElementById('status-msg');
-            const interval = setInterval(async () => {
-                try {
-                    const res = await fetch(`${API_BASE}/v1/query/${id}`);
-                    const data = await res.json();
-                    if (data.status === "SUCCESS") {
-                        clearInterval(interval);
-                        statusMsg.className = "success";
-                        statusMsg.innerText = "☕ Success! Infinite Impact!";
-                        document.getElementById('form-container').style.display = 'none';
-                    } else if (data.status === "FAILED") {
-                        clearInterval(interval);
-                        statusMsg.className = "error";
-                        statusMsg.innerText = "❌ Transaction Failed.";
-                        document.getElementById('payBtn').disabled = false;
-                    }
-                } catch (e) { console.error("Polling error", e); }
+        function startTimer() {
+            let time = 120;
+            const timerEl = document.getElementById('timer');
+            const itv = setInterval(() => {
+                time--;
+                let mins = Math.floor(time / 60);
+                let secs = time % 60;
+                timerEl.innerText = `0${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                if(time <= 0) clearInterval(itv);
+            }, 1000);
+        }
+
+        function cycleMessages() {
+            const msgEl = document.getElementById('funny-msg');
+            setInterval(() => {
+                msgEl.innerText = msgs[Math.floor(Math.random() * msgs.length)];
+            }, 4000);
+        }
+
+        async function pollPayment(id) {
+            const itv = setInterval(async () => {
+                const res = await fetch(`https://www.gathuo.app/v1/query/${id}`);
+                const data = await res.json();
+                if(data.status === "SUCCESS") {
+                    clearInterval(itv);
+                    document.getElementById('overlay').style.display = 'none';
+                    showToast("CONNECTED! Enjoy Sade Net.", "success");
+                } else if(data.status === "FAILED") {
+                    clearInterval(itv);
+                    document.getElementById('overlay').style.display = 'none';
+                    showToast("Payment Failed. Try again.", "error");
+                }
             }, 3000);
         }
     </script>
