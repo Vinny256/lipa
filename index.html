@@ -3,37 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SADE NET | Infinite Impact</title>
+    <title>SADE NET | INFINITE IMPACT</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <style>
-        :root { --orange: #ff6600; --dark: #0f0f0f; --glass: rgba(255, 255, 255, 0.05); }
-        body { font-family: 'Inter', sans-serif; background: var(--dark); color: white; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        :root { --orange: #ff6600; --dark: #0a0a0a; --glass: rgba(255, 255, 255, 0.03); }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--dark); color: white; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         
-        .main-card { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 2.5rem; border-radius: 30px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
-        .logo { font-size: 1.8rem; font-weight: 900; color: var(--orange); margin-bottom: 0.5rem; }
-        .tagline { font-size: 0.8rem; opacity: 0.6; margin-bottom: 2rem; }
+        .main-card { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); padding: 2.5rem; border-radius: 40px; width: 90%; max-width: 420px; text-align: center; box-shadow: 0 40px 100px rgba(0,0,0,0.8); }
+        .logo { font-size: 2rem; font-weight: 900; color: var(--orange); letter-spacing: -2px; }
+        .tagline { font-size: 0.75rem; opacity: 0.5; margin-bottom: 2.5rem; text-transform: uppercase; letter-spacing: 2px; }
 
-        .input-group { text-align: left; margin-bottom: 15px; }
-        label { font-size: 0.7rem; font-weight: bold; text-transform: uppercase; color: var(--orange); margin-left: 5px; }
+        .input-group { text-align: left; margin-bottom: 20px; }
+        label { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--orange); margin-bottom: 8px; display: block; padding-left: 10px; }
         
-        select, input { width: 100%; padding: 15px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: white; font-size: 1rem; margin-top: 5px; box-sizing: border-box; }
-        select option { background: #1a1a1a; }
+        select, input { width: 100%; padding: 18px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; color: white; font-size: 1rem; box-sizing: border-box; transition: 0.3s; }
+        select:focus, input:focus { border-color: var(--orange); outline: none; background: rgba(255,255,255,0.1); }
 
-        /* Modal / Popup Styles */
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: #1a1a1a; padding: 2rem; border-radius: 25px; text-align: center; border: 1px solid var(--orange); width: 100%; max-width: 320px; }
-
-        .bar-container { display: flex; align-items: flex-end; justify-content: center; gap: 5px; height: 40px; margin-bottom: 20px; }
-        .bar { width: 6px; border-radius: 3px; animation: wave 1s infinite ease-in-out; }
-        @keyframes wave { 0%, 100% { height: 10px; background: var(--orange); } 50% { height: 40px; background: #ffcc00; } }
+        /* Modal Architecture */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: #111; padding: 3rem 2rem; border-radius: 35px; text-align: center; border: 1px solid #222; width: 100%; max-width: 350px; position: relative; }
+        
+        /* Bar Animation */
+        .bar-container { display: flex; align-items: flex-end; justify-content: center; gap: 8px; height: 60px; margin-bottom: 30px; }
+        .bar { width: 10px; border-radius: 5px; animation: surge 0.8s infinite ease-in-out; }
+        @keyframes surge { 0%, 100% { height: 15px; background: #333; } 50% { height: 60px; background: var(--orange); } }
         .bar:nth-child(2) { animation-delay: 0.1s; } .bar:nth-child(3) { animation-delay: 0.2s; } .bar:nth-child(4) { animation-delay: 0.3s; }
 
-        .timer { font-size: 1.5rem; font-weight: bold; color: var(--orange); margin: 10px 0; }
-        .funny-msg { font-size: 0.85rem; color: #ccc; font-style: italic; min-height: 40px; }
+        .timer { font-size: 2.5rem; font-weight: 900; color: white; margin: 15px 0; font-variant-numeric: tabular-nums; }
+        .status-title { font-size: 1.2rem; font-weight: bold; color: var(--orange); margin-bottom: 15px; }
+        .funny-msg { font-size: 0.9rem; color: #888; font-style: italic; min-height: 50px; line-height: 1.4; }
 
-        button { background: var(--orange); color: white; border: none; padding: 18px; width: 100%; border-radius: 15px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        button:hover { transform: scale(1.02); background: #e65c00; }
+        button { background: var(--orange); color: white; border: none; padding: 20px; width: 100%; border-radius: 20px; font-weight: 900; font-size: 1rem; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
+        button:hover { background: #ff7722; box-shadow: 0 0 30px rgba(255,102,0,0.4); }
+        .btn-close { background: #222; margin-top: 20px; display: none; }
     </style>
 </head>
 <body>
@@ -43,57 +46,66 @@
         <div class="tagline">By Vinnie Digital Hub</div>
 
         <div class="input-group">
-            <label>Select Your Plan</label>
+            <label>Choose Your Plan</label>
             <select id="plan-select">
-                <option value="5">5/= (30 Mins) - Lite</option>
-                <option value="10" selected>10/= (1 Hour) - ⭐ RECOMMENDED</option>
-                <option value="20">20/= (4 Hours) - Heavy</option>
-                <option value="50">50/= (24 Hours) - Unlimited</option>
-                <option value="100">100/= (3 Days) - Weekend Vibe</option>
+                <option value="5">5/= For 30 Minutes - Quick Fix</option>
+                <option value="10" selected>10/= For 1 Hour - Recommended</option>
+                <option value="20">20/= For 4 Hours - Movie Run</option>
+                <option value="40">40/= For 10 Hours - Remote Work</option>
+                <option value="50">50/= For 24 Hours - Day Pass</option>
+                <option value="100">100/= For 3 Days - Weekend Warrior</option>
+                <option value="200">200/= For 7 Days - Weekly Grind</option>
+                <option value="500">500/= For 30 Days - Absolute Power</option>
             </select>
         </div>
 
         <div class="input-group">
-            <label>M-PESA Number</label>
-            <input type="text" id="phone" placeholder="07XXXXXXXX">
+            <label>M-PESA Phone Number</label>
+            <input type="text" id="phone" placeholder="0712345678">
         </div>
 
-        <button onclick="initiateSadeNet()">Get Connected</button>
+        <button onclick="initiateSade()">Secure Internet</button>
     </div>
 
     <div class="modal-overlay" id="sade-modal">
-        <div class="modal-content">
+        <div class="modal-content" id="modal-box">
             <div class="bar-container">
                 <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
             </div>
-            <div id="modal-status-title" style="font-weight: bold; margin-bottom: 10px; color: var(--orange);">Waking up servers...</div>
-            <div id="funny-msg" class="funny-msg">Hold on, Vinnie is pedaling the server bike...</div>
+            <div id="modal-status-title" class="status-title">Establishing Link...</div>
+            <div id="funny-msg" class="funny-msg">Vinnie is currently cleaning the fiber cables. One moment.</div>
             <div id="timer" class="timer">02:00</div>
-            <button id="close-modal" style="display:none; background: #333;" onclick="closeModal()">Close</button>
+            <button id="close-modal" class="btn-close" onclick="closeModal()">Back To Plans</button>
         </div>
     </div>
 
     <script>
-        const msgs = [
-            "This won't take a century, maybe...",
-            "Checking if Safaricom is awake...",
-            "Brewing your connection...",
-            "Almost there, don't throw your phone...",
-            "Sade Net is faster than your ex's replies...",
-            "Connecting to the satellites in Embu..."
+        const requestMsgs = [
+            "Vinnie is currently pedaling the server bike to wake up Render.",
+            "Contacting the satellites over Embu. They seem sleepy.",
+            "Optimizing your packets. They were a bit messy.",
+            "Searching for Safaricom's permission to let you be great.",
+            "This is still faster than using your neighbor's weak Wi-Fi."
+        ];
+
+        const waitingMsgs = [
+            "The prompt is on your phone. Don't stare at it, enter the PIN.",
+            "Safaricom is currently deciding your fate. Hold tight.",
+            "Vinnie is waiting for the money to hit the hub. Be patient.",
+            "Processing your request. If your phone is silent, check your life choices.",
+            "Almost there. Don't close this or the internet gods will frown."
         ];
 
         let timerInterval;
 
-        function initiateSadeNet() {
+        function initiateSade() {
             const phone = document.getElementById('phone').value;
-            if(!phone) return showToast("Enter your number!", "error");
+            if(!phone) return showToast("Phone number required for entry.", "error");
 
-            openModal("Waking up servers...", "Hold a bit, initializing Sade Net...");
+            openModal("Waking Up Servers", "Vinnie is currently pedaling the server bike to wake up Render.");
             startTimer(120);
-            cycleMessages();
+            cycleMessages(requestMsgs);
 
-            // Actual API Call
             fetch('https://www.gathuo.app/v1/initiate-pay', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -101,19 +113,22 @@
                     phone: phone,
                     amount: document.getElementById('plan-select').value,
                     reference: "SADE NET",
-                    desc: "Sade Net WiFi"
+                    desc: "Sade Net Access"
                 })
             })
             .then(res => res.json())
             .then(data => {
                 if(data.CheckoutRequestID) {
-                    updateModal("Confirming with Safaricom...", "Check your phone for the M-PESA prompt!");
-                    startTimer(60); // Reset timer for callback wait
+                    // Change Modal Appearance for M-PESA Phase
+                    document.getElementById('modal-box').style.borderColor = "#ff6600";
+                    updateModal("Awaiting PIN Entry", "The prompt is on your phone. Don't stare at it, enter the PIN.");
+                    startTimer(60); 
+                    cycleMessages(waitingMsgs);
                     pollStatus(data.CheckoutRequestID);
                 }
             })
             .catch(() => {
-                updateModal("Oops!", "Server took too long to wake up. Try again.");
+                updateModal("Server Fatigue", "The server is exhausted. Please try again in a few seconds.");
                 document.getElementById('close-modal').style.display = 'block';
             });
         }
@@ -126,25 +141,35 @@
 
                     if(data.status === "SUCCESS") {
                         clearInterval(itv);
-                        updateModal("CONNECTED! ✅", "Enjoy Sade Net. Infinite Impact confirmed!");
+                        updateModal("Infinite Access Granted", "Payment confirmed. You are now a certified Sade Net citizen. Go forth and surf.");
+                        document.getElementById('modal-box').style.borderColor = "#00ff00";
                         document.getElementById('close-modal').style.display = 'block';
                     } else if(data.status === "FAILED") {
                         clearInterval(itv);
-                        let failMsg = "Safaricom told us you are broke, top up!";
-                        if(data.message.includes("cancel")) failMsg = "Why did you cancel? Sade Net missed you.";
-                        updateModal("Payment Failed ❌", failMsg);
+                        let failMsg = "Safaricom says you are currently allergic to money. Top up.";
+                        
+                        if(data.message.toLowerCase().includes("cancel")) {
+                            failMsg = "You cancelled the request. Sade Net will remember this rejection.";
+                        } else if(data.message.toLowerCase().includes("wrong") || data.message.toLowerCase().includes("pin")) {
+                            failMsg = "Wrong PIN. Your fingers are failing you. Try again carefully.";
+                        } else if(data.message.toLowerCase().includes("timeout")) {
+                            failMsg = "You took too long. Safaricom has short patience, and so do we.";
+                        }
+                        
+                        updateModal("Access Denied", failMsg);
+                        document.getElementById('modal-box').style.borderColor = "#ff0000";
                         document.getElementById('close-modal').style.display = 'block';
                     }
                 } catch(e) {}
             }, 3000);
         }
 
-        // UI Helpers
         function openModal(title, msg) {
             document.getElementById('sade-modal').style.display = 'flex';
             document.getElementById('modal-status-title').innerText = title;
             document.getElementById('funny-msg').innerText = msg;
             document.getElementById('close-modal').style.display = 'none';
+            document.getElementById('modal-box').style.borderColor = "#222";
         }
 
         function updateModal(title, msg) {
@@ -164,20 +189,28 @@
                 let mins = Math.floor(time / 60);
                 let secs = time % 60;
                 document.getElementById('timer').innerText = `0${mins}:${secs < 10 ? '0' : ''}${secs}`;
-                if (--time < 0) clearInterval(timerInterval);
+                if (--time < 0) {
+                    clearInterval(timerInterval);
+                    updateModal("Time Out", "You were too slow. Try again when you're ready.");
+                    document.getElementById('close-modal').style.display = 'block';
+                }
             }, 1000);
         }
 
-        function cycleMessages() {
-            setInterval(() => {
+        function cycleMessages(msgArray) {
+            let i = 0;
+            const cycleInterval = setInterval(() => {
                 if(document.getElementById('sade-modal').style.display === 'flex') {
-                    document.getElementById('funny-msg').innerText = msgs[Math.floor(Math.random() * msgs.length)];
+                    document.getElementById('funny-msg').innerText = msgArray[i % msgArray.length];
+                    i++;
+                } else {
+                    clearInterval(cycleInterval);
                 }
-            }, 5000);
+            }, 6000);
         }
 
         function showToast(msg, type) {
-            Toastify({ text: msg, duration: 3000, style: { background: type === "success" ? "#28a745" : "#ff6600" } }).showToast();
+            Toastify({ text: msg, duration: 4000, style: { background: "#ff6600", borderRadius: "15px" } }).showToast();
         }
     </script>
 </body>
