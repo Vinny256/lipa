@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy Vinnie a Coffee | Infinite Impact</title>
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #fafafa; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 2.5rem; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); text-align: center; width: 380px; border-top: 6px solid #ff6600; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; font-size: 0.8rem; font-weight: bold; color: #ff6600; margin-bottom: 5px; text-transform: uppercase; }
+        input { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 10px; box-sizing: border-box; }
+        button { background: #ff6600; color: white; border: none; padding: 16px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        button:disabled { background: #ccc; }
+        .success { color: #28a745; font-weight: bold; margin-top: 15px; }
+        .error { color: #dc3545; font-weight: bold; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <span style="font-size: 3rem;">☕</span>
+        <h2>Vinnie Digital Hub</h2>
+        <p>Support Infinite Impact.</p>
+        
+        <div id="form-container">
+            <div class="input-group"><label>Name</label><input type="text" id="name" placeholder="Name"></div>
+            <div class="input-group"><label>M-PESA Number</label><input type="text" id="phone" placeholder="07XXXXXXXX"></div>
+            <div class="input-group"><label>Amount (KES)</label><input type="number" id="amount" value="50"></div>
+            <button id="payBtn" onclick="handlePayment()">Send Coffee</button>
+        </div>
+        <div id="status-msg"></div>
+    </div>
+
+    <script>
+        const API_BASE = "https://www.gathuo.app"; 
+
+        async function handlePayment() {
+            const btn = document.getElementById('payBtn');
+            const statusMsg = document.getElementById('status-msg');
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const amount = document.getElementById('amount').value;
+
+            if(!phone || !amount) return alert("Fill in details");
+
+            btn.disabled = true;
+            statusMsg.innerText = "Check your phone...";
+
+            try {
+                const res = await fetch(`${API_BASE}/v1/initiate-pay`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        phone: phone,
+                        amount: amount,
+                        reference: "COFFEE-" + name.toUpperCase().replace(/\s/g, '').slice(0,5),
+                        desc: "Gathuo Hub Support" 
+                    })
+                });
+
+                const data = await res.json();
+                if (data.CheckoutRequestID) {
+                    pollStatus(data.CheckoutRequestID);
+                } else { throw new Error("Push failed"); }
+            } catch (err) {
+                statusMsg.className = "error";
+                statusMsg.innerText = "Connection failed. Check CORS settings.";
+                btn.disabled = false;
+            }
+        }
+
+        function pollStatus(id) {
+            const statusMsg = document.getElementById('status-msg');
+            const interval = setInterval(async () => {
+                try {
+                    const res = await fetch(`${API_BASE}/v1/query/${id}`);
+                    const data = await res.json();
+                    if (data.status === "SUCCESS") {
+                        clearInterval(interval);
+                        statusMsg.className = "success";
+                        statusMsg.innerText = "☕ Success! Infinite Impact!";
+                        document.getElementById('form-container').style.display = 'none';
+                    } else if (data.status === "FAILED") {
+                        clearInterval(interval);
+                        statusMsg.className = "error";
+                        statusMsg.innerText = "❌ Transaction Failed.";
+                        document.getElementById('payBtn').disabled = false;
+                    }
+                } catch (e) { console.error("Polling error", e); }
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
