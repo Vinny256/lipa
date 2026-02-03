@@ -7,157 +7,177 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <style>
-        :root { --orange: #ff6600; --dark: #1a1a1a; --gray: #f4f4f4; }
+        :root { --orange: #ff6600; --dark: #0f0f0f; --glass: rgba(255, 255, 255, 0.05); }
         body { font-family: 'Inter', sans-serif; background: var(--dark); color: white; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         
-        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 2rem; border-radius: 24px; width: 90%; max-width: 400px; text-align: center; }
-        .logo { font-size: 1.5rem; font-weight: 900; letter-spacing: -1px; color: var(--orange); margin-bottom: 2rem; }
+        .main-card { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 2.5rem; border-radius: 30px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        .logo { font-size: 1.8rem; font-weight: 900; color: var(--orange); margin-bottom: 0.5rem; }
+        .tagline { font-size: 0.8rem; opacity: 0.6; margin-bottom: 2rem; }
+
+        .input-group { text-align: left; margin-bottom: 15px; }
+        label { font-size: 0.7rem; font-weight: bold; text-transform: uppercase; color: var(--orange); margin-left: 5px; }
         
-        .plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .plan { background: rgba(255, 255, 255, 0.08); padding: 15px; border-radius: 16px; cursor: pointer; border: 2px solid transparent; transition: 0.3s; }
-        .plan.active { border-color: var(--orange); background: rgba(255, 102, 0, 0.1); }
-        .plan h3 { margin: 0; font-size: 1.2rem; }
-        .plan p { margin: 5px 0 0; font-size: 0.8rem; opacity: 0.6; }
+        select, input { width: 100%; padding: 15px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: white; font-size: 1rem; margin-top: 5px; box-sizing: border-box; }
+        select option { background: #1a1a1a; }
 
-        input { width: 100%; padding: 14px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; box-sizing: border-box; font-size: 1rem; margin-top: 10px; }
-        input:focus { outline: none; border-color: var(--orange); }
+        /* Modal / Popup Styles */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: #1a1a1a; padding: 2rem; border-radius: 25px; text-align: center; border: 1px solid var(--orange); width: 100%; max-width: 320px; }
 
-        button { background: var(--orange); color: white; border: none; padding: 16px; width: 100%; border-radius: 12px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 20px; transition: 0.3s; }
-        button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,102,0,0.3); }
+        .bar-container { display: flex; align-items: flex-end; justify-content: center; gap: 5px; height: 40px; margin-bottom: 20px; }
+        .bar { width: 6px; border-radius: 3px; animation: wave 1s infinite ease-in-out; }
+        @keyframes wave { 0%, 100% { height: 10px; background: var(--orange); } 50% { height: 40px; background: #ffcc00; } }
+        .bar:nth-child(2) { animation-delay: 0.1s; } .bar:nth-child(3) { animation-delay: 0.2s; } .bar:nth-child(4) { animation-delay: 0.3s; }
 
-        /* Render Wake-up & Payment Loading Overlay */
-        #overlay { display: none; position: fixed; inset: 0; background: var(--dark); z-index: 100; flex-direction: column; align-items: center; justify-content: center; }
-        .bar-container { display: flex; align-items: flex-end; gap: 6px; height: 50px; margin-bottom: 20px; }
-        .bar { width: 8px; border-radius: 4px; animation: bounce 1s infinite ease-in-out; }
-        @keyframes bounce { 
-            0%, 100% { height: 10px; background: var(--orange); } 
-            50% { height: 50px; background: #ffcc00; } 
-        }
-        .bar:nth-child(2) { animation-delay: 0.1s; }
-        .bar:nth-child(3) { animation-delay: 0.2s; }
-        .bar:nth-child(4) { animation-delay: 0.3s; }
-        
-        #funny-msg { font-size: 0.9rem; font-style: italic; color: #aaa; height: 20px; }
-        #timer { font-size: 2rem; font-weight: bold; margin-top: 10px; color: var(--orange); }
+        .timer { font-size: 1.5rem; font-weight: bold; color: var(--orange); margin: 10px 0; }
+        .funny-msg { font-size: 0.85rem; color: #ccc; font-style: italic; min-height: 40px; }
+
+        button { background: var(--orange); color: white; border: none; padding: 18px; width: 100%; border-radius: 15px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        button:hover { transform: scale(1.02); background: #e65c00; }
     </style>
 </head>
 <body>
 
-    <div class="glass-card" id="main-ui">
-        <div class="logo">SADE NET <small style="color:white; font-size: 0.6rem; opacity: 0.5;">BY VINNIE HUB</small></div>
-        
-        <div class="plan-grid">
-            <div class="plan active" onclick="selectPlan(this, 5, '30 MINS')"><h3>5/=</h3><p>30 MINS</p></div>
-            <div class="plan" onclick="selectPlan(this, 10, '1 HOUR')"><h3>10/=</h3><p>1 HOUR</p></div>
-            <div class="plan" onclick="selectPlan(this, 20, '4 HOURS')"><h3>20/=</h3><p>4 HOURS</p></div>
-            <div class="plan" onclick="selectPlan(this, 50, '24 HOURS')"><h3>50/=</h3><p>24 HOURS</p></div>
+    <div class="main-card">
+        <div class="logo">SADE NET</div>
+        <div class="tagline">By Vinnie Digital Hub</div>
+
+        <div class="input-group">
+            <label>Select Your Plan</label>
+            <select id="plan-select">
+                <option value="5">5/= (30 Mins) - Lite</option>
+                <option value="10" selected>10/= (1 Hour) - ⭐ RECOMMENDED</option>
+                <option value="20">20/= (4 Hours) - Heavy</option>
+                <option value="50">50/= (24 Hours) - Unlimited</option>
+                <option value="100">100/= (3 Days) - Weekend Vibe</option>
+            </select>
         </div>
 
-        <input type="text" id="phone" placeholder="07XXXXXXXX">
-        <button onclick="startProcess()">Unlock Internet</button>
+        <div class="input-group">
+            <label>M-PESA Number</label>
+            <input type="text" id="phone" placeholder="07XXXXXXXX">
+        </div>
+
+        <button onclick="initiateSadeNet()">Get Connected</button>
     </div>
 
-    <div id="overlay">
-        <div class="bar-container">
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    <div class="modal-overlay" id="sade-modal">
+        <div class="modal-content">
+            <div class="bar-container">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
+            <div id="modal-status-title" style="font-weight: bold; margin-bottom: 10px; color: var(--orange);">Waking up servers...</div>
+            <div id="funny-msg" class="funny-msg">Hold on, Vinnie is pedaling the server bike...</div>
+            <div id="timer" class="timer">02:00</div>
+            <button id="close-modal" style="display:none; background: #333;" onclick="closeModal()">Close</button>
         </div>
-        <div id="funny-msg">Waking up the servers...</div>
-        <div id="timer">02:00</div>
     </div>
 
     <script>
-        let selectedAmount = 5;
         const msgs = [
             "This won't take a century, maybe...",
-            "Hold a bit, Vinnie is pedaling the server bike...",
-            "Brewing your connection...",
             "Checking if Safaricom is awake...",
+            "Brewing your connection...",
             "Almost there, don't throw your phone...",
-            "Sade Net is faster than your ex's replies..."
+            "Sade Net is faster than your ex's replies...",
+            "Connecting to the satellites in Embu..."
         ];
 
-        function selectPlan(el, amt, label) {
-            document.querySelectorAll('.plan').forEach(p => p.classList.remove('active'));
-            el.classList.add('active');
-            selectedAmount = amt;
-        }
+        let timerInterval;
 
-        function showToast(msg, type = "info") {
-            Toastify({
-                text: msg,
-                duration: 3000,
-                gravity: "top",
-                position: "center",
-                style: { background: type === "success" ? "#28a745" : "#ff6600" }
-            }).showToast();
-        }
-
-        async function startProcess() {
+        function initiateSadeNet() {
             const phone = document.getElementById('phone').value;
-            if(!phone) return showToast("Phone number required!", "error");
+            if(!phone) return showToast("Enter your number!", "error");
 
-            // Show Overlay (Render Wake up)
-            document.getElementById('overlay').style.display = 'flex';
-            startTimer();
+            openModal("Waking up servers...", "Hold a bit, initializing Sade Net...");
+            startTimer(120);
             cycleMessages();
 
-            try {
-                // Point to your stealth route
-                const res = await fetch('https://www.gathuo.app/v1/initiate-pay', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        phone: phone,
-                        amount: selectedAmount,
-                        reference: "SADE NET", // As requested
-                        desc: "Sade Net WiFi Access"
-                    })
-                });
-                
-                const data = await res.json();
+            // Actual API Call
+            fetch('https://www.gathuo.app/v1/initiate-pay', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    phone: phone,
+                    amount: document.getElementById('plan-select').value,
+                    reference: "SADE NET",
+                    desc: "Sade Net WiFi"
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
                 if(data.CheckoutRequestID) {
-                    showToast("Prompt sent! Enter PIN.", "success");
-                    pollPayment(data.CheckoutRequestID);
+                    updateModal("Confirming with Safaricom...", "Check your phone for the M-PESA prompt!");
+                    startTimer(60); // Reset timer for callback wait
+                    pollStatus(data.CheckoutRequestID);
                 }
-            } catch (e) {
-                document.getElementById('overlay').style.display = 'none';
-                showToast("Server taking too long. Try again.", "error");
-            }
+            })
+            .catch(() => {
+                updateModal("Oops!", "Server took too long to wake up. Try again.");
+                document.getElementById('close-modal').style.display = 'block';
+            });
         }
 
-        function startTimer() {
-            let time = 120;
-            const timerEl = document.getElementById('timer');
-            const itv = setInterval(() => {
-                time--;
+        async function pollStatus(id) {
+            const itv = setInterval(async () => {
+                try {
+                    const res = await fetch(`https://www.gathuo.app/v1/query/${id}`);
+                    const data = await res.json();
+
+                    if(data.status === "SUCCESS") {
+                        clearInterval(itv);
+                        updateModal("CONNECTED! ✅", "Enjoy Sade Net. Infinite Impact confirmed!");
+                        document.getElementById('close-modal').style.display = 'block';
+                    } else if(data.status === "FAILED") {
+                        clearInterval(itv);
+                        let failMsg = "Safaricom told us you are broke, top up!";
+                        if(data.message.includes("cancel")) failMsg = "Why did you cancel? Sade Net missed you.";
+                        updateModal("Payment Failed ❌", failMsg);
+                        document.getElementById('close-modal').style.display = 'block';
+                    }
+                } catch(e) {}
+            }, 3000);
+        }
+
+        // UI Helpers
+        function openModal(title, msg) {
+            document.getElementById('sade-modal').style.display = 'flex';
+            document.getElementById('modal-status-title').innerText = title;
+            document.getElementById('funny-msg').innerText = msg;
+            document.getElementById('close-modal').style.display = 'none';
+        }
+
+        function updateModal(title, msg) {
+            document.getElementById('modal-status-title').innerText = title;
+            document.getElementById('funny-msg').innerText = msg;
+        }
+
+        function closeModal() {
+            document.getElementById('sade-modal').style.display = 'none';
+            clearInterval(timerInterval);
+        }
+
+        function startTimer(duration) {
+            clearInterval(timerInterval);
+            let time = duration;
+            timerInterval = setInterval(() => {
                 let mins = Math.floor(time / 60);
                 let secs = time % 60;
-                timerEl.innerText = `0${mins}:${secs < 10 ? '0' : ''}${secs}`;
-                if(time <= 0) clearInterval(itv);
+                document.getElementById('timer').innerText = `0${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                if (--time < 0) clearInterval(timerInterval);
             }, 1000);
         }
 
         function cycleMessages() {
-            const msgEl = document.getElementById('funny-msg');
             setInterval(() => {
-                msgEl.innerText = msgs[Math.floor(Math.random() * msgs.length)];
-            }, 4000);
+                if(document.getElementById('sade-modal').style.display === 'flex') {
+                    document.getElementById('funny-msg').innerText = msgs[Math.floor(Math.random() * msgs.length)];
+                }
+            }, 5000);
         }
 
-        async function pollPayment(id) {
-            const itv = setInterval(async () => {
-                const res = await fetch(`https://www.gathuo.app/v1/query/${id}`);
-                const data = await res.json();
-                if(data.status === "SUCCESS") {
-                    clearInterval(itv);
-                    document.getElementById('overlay').style.display = 'none';
-                    showToast("CONNECTED! Enjoy Sade Net.", "success");
-                } else if(data.status === "FAILED") {
-                    clearInterval(itv);
-                    document.getElementById('overlay').style.display = 'none';
-                    showToast("Payment Failed. Try again.", "error");
-                }
-            }, 3000);
+        function showToast(msg, type) {
+            Toastify({ text: msg, duration: 3000, style: { background: type === "success" ? "#28a745" : "#ff6600" } }).showToast();
         }
     </script>
 </body>
